@@ -51,6 +51,11 @@ cli
     '--single-file',
     'Use copy instead of sync for single file operations'
   )
+  .option(
+    '--aws-cli-path <awsCliPath>',
+    'Full path to AWS CLI executable (AWS_CLI_PATH)',
+    'aws'
+  )
   .action(async (source, dest, options) => {
     try {
       await doSync({
@@ -73,7 +78,8 @@ cli
             process.env.DEST_SESSION_TOKEN || options.destSessionToken
         },
         stagingDir: process.env.STAGING_DIR || options.stagingDir,
-        singleFile: options.singleFile
+        singleFile: options.singleFile,
+        awsCliPath: process.env.AWS_CLI_PATH || options.awsCliPath
       });
     } catch (err) {
       console.log((err as Error).message);
