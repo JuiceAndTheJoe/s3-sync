@@ -137,7 +137,7 @@ async function copyLargeFileChunkedSDK(
 
   const sourceKey = source.s3url.pathname.substring(1);
   let destKey = dest.s3url.pathname.substring(1);
-  
+
   // If destination ends with '/' or is empty, append the source filename
   if (destKey === '' || destKey.endsWith('/')) {
     const sourceFileName = source.s3url.pathname.split('/').pop();
