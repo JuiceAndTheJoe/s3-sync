@@ -22,7 +22,15 @@
 
 [![Badge OSC](https://img.shields.io/badge/Evaluate-24243B?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8yODIxXzMxNjcyKSIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI3IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiLz4KPGRlZnM%2BCjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8yODIxXzMxNjcyIiB4MT0iMTIiIHkxPSIwIiB4Mj0iMTIiIHkyPSIyNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjQzE4M0ZGIi8%2BCjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzREQzlGRiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM%2BCjwvc3ZnPgo%3D)](https://app.osaas.io/browse/eyevinn-s3-sync)
 
-Sync files on one S3 bucket to another S3 bucket.
+Sync files on one S3 bucket to another S3 bucket with support for large files, session tokens, and single file operations.
+
+## Features
+
+- **Directory and Single File Sync**: Sync entire directories or individual files between S3 buckets
+- **Large File Support**: Automatic chunked copying for files over 500MB using AWS SDK multipart upload
+- **Session Token Support**: Compatible with temporary AWS credentials including session tokens
+- **Cross-Region Support**: Sync between different AWS regions and S3-compatible endpoints
+- **Configurable Staging**: Customizable local staging directory for operations
 
 ## Requirements
 
@@ -33,7 +41,9 @@ Sync files on one S3 bucket to another S3 bucket.
 
 Options can be provided either as command line options or environment variables.
 
-```
+### Basic Usage
+
+```bash
 % npx @eyevinn/s3-sync \
   --source-access-key=<source-access-key> \
   --source-secret-key=<source-secret-key> \
@@ -44,21 +54,79 @@ Options can be provided either as command line options or environment variables.
   s3://source/files/ s3://dest/files/
 ```
 
-Using environment variables stored in a file called `.env` in this example:
+### Single File Copy
 
+```bash
+% npx @eyevinn/s3-sync \
+  --single-file \
+  --source-access-key=<source-access-key> \
+  --source-secret-key=<source-secret-key> \
+  s3://source/large-file.mp4 s3://dest/large-file.mp4
 ```
+
+### With Session Tokens (for temporary credentials)
+
+```bash
+% npx @eyevinn/s3-sync \
+  --source-access-key=<source-access-key> \
+  --source-secret-key=<source-secret-key> \
+  --source-session-token=<source-session-token> \
+  --dest-access-key=<dest-access-key> \
+  --dest-secret-key=<dest-secret-key> \
+  --dest-session-token=<dest-session-token> \
+  s3://source/files/ s3://dest/files/
+```
+
+### Using Environment Variables
+
+Store credentials in a file called `.env`:
+
+```bash
 SOURCE_ACCESS_KEY=<source-access-key>
 SOURCE_SECRET_KEY=<source-secret-key>
+SOURCE_SESSION_TOKEN=<source-session-token>  # Optional
 SOURCE_REGION=<source-region>
-DEST_ENDPOINT=<dest-endpoint>
+SOURCE_ENDPOINT=<source-endpoint>             # Optional
 DEST_ACCESS_KEY=<dest-access-key>
 DEST_SECRET_KEY=<dest-secret-key>
+DEST_SESSION_TOKEN=<dest-session-token>       # Optional
+DEST_REGION=<dest-region>
+DEST_ENDPOINT=<dest-endpoint>                 # Optional
+STAGING_DIR=/tmp/data                         # Optional, default: /tmp/data
+AWS_CLI_PATH=/usr/local/bin/aws               # Optional, default: aws
 ```
 
-```
+```bash
 % set -a ; source .env ; set +a
 % npx @eyevinn/s3-sync s3://source/files s3://dest/files/
 ```
+
+## Command Line Options
+
+| Option | Environment Variable | Description | Default |
+|--------|---------------------|-------------|---------|
+| `--source-access-key` | `SOURCE_ACCESS_KEY` | Source S3 access key | - |
+| `--source-secret-key` | `SOURCE_SECRET_KEY` | Source S3 secret key | - |
+| `--source-session-token` | `SOURCE_SESSION_TOKEN` | Source S3 session token (for temporary credentials) | - |
+| `--source-region` | `SOURCE_REGION` | Source S3 region | - |
+| `--source-endpoint` | `SOURCE_ENDPOINT` | Source S3 endpoint (for S3-compatible services) | - |
+| `--dest-access-key` | `DEST_ACCESS_KEY` | Destination S3 access key | - |
+| `--dest-secret-key` | `DEST_SECRET_KEY` | Destination S3 secret key | - |
+| `--dest-session-token` | `DEST_SESSION_TOKEN` | Destination S3 session token (for temporary credentials) | - |
+| `--dest-region` | `DEST_REGION` | Destination S3 region | - |
+| `--dest-endpoint` | `DEST_ENDPOINT` | Destination S3 endpoint (for S3-compatible services) | - |
+| `--staging-dir` | `STAGING_DIR` | Local staging directory | `/tmp/data` |
+| `--single-file` | - | Use copy instead of sync for single file operations | `false` |
+| `--aws-cli-path` | `AWS_CLI_PATH` | Full path to AWS CLI executable | `aws` |
+
+## Large File Handling
+
+Files larger than 500MB are automatically processed using chunked copying with the AWS SDK for improved performance and reliability. This feature:
+
+- Uses multipart upload for better error recovery
+- Processes files in 100MB chunks
+- Provides progress logging for large transfers
+- Automatically falls back to traditional copy for smaller files
 
 ## Eyevinn Open Source Cloud
 

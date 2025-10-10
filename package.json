@@ -21,6 +21,7 @@
     "node": ">=18.15.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.907.0",
     "commander": "^12.1.0"
   },
   "devDependencies": {
