@@ -21,6 +21,10 @@ cli
     '--source-secret-key <sourceSecretKey>',
     'Source S3 secret key (SOURCE_SECRET_KEY)'
   )
+  .option(
+    '--source-session-token <sourceSessionToken>',
+    'Source S3 session token (SOURCE_SESSION_TOKEN)'
+  )
   .option('--dest-region <destRegion>', 'Destination S3 region (DEST_REGION)')
   .option(
     '--dest-endpoint <destEndpoint>',
@@ -33,6 +37,10 @@ cli
   .option(
     '--dest-secret-key <destSecretKey>',
     'Destination S3 secret key (DEST_SECRET_KEY)'
+  )
+  .option(
+    '--dest-session-token <destSessionToken>',
+    'Destination S3 session token (DEST_SESSION_TOKEN)'
   )
   .option(
     '--staging-dir <stagingDir>',
@@ -51,14 +59,18 @@ cli
           s3region: process.env.SOURCE_REGION || options.sourceRegion,
           s3endpoint: process.env.SOURCE_ENDPOINT || options.sourceEndpoint,
           s3accessKey: process.env.SOURCE_ACCESS_KEY || options.sourceAccessKey,
-          s3secretKey: process.env.SOURCE_SECRET_KEY || options.sourceSecretKey
+          s3secretKey: process.env.SOURCE_SECRET_KEY || options.sourceSecretKey,
+          s3sessionToken:
+            process.env.SOURCE_SESSION_TOKEN || options.sourceSessionToken
         },
         dest: {
           s3url: new URL(dest),
           s3region: process.env.DEST_REGION || options.destRegion,
           s3endpoint: process.env.DEST_ENDPOINT || options.destEndpoint,
           s3accessKey: process.env.DEST_ACCESS_KEY || options.destAccessKey,
-          s3secretKey: process.env.DEST_SECRET_KEY || options.destSecretKey
+          s3secretKey: process.env.DEST_SECRET_KEY || options.destSecretKey,
+          s3sessionToken:
+            process.env.DEST_SESSION_TOKEN || options.destSessionToken
         },
         stagingDir: process.env.STAGING_DIR || options.stagingDir,
         singleFile: options.singleFile

@@ -11,6 +11,7 @@ export interface BucketConfig {
   s3endpoint?: string;
   s3accessKey?: string;
   s3secretKey?: string;
+  s3sessionToken?: string;
 }
 
 export interface SyncOptions {
@@ -44,6 +45,7 @@ async function syncToLocal(source: BucketConfig, stagingDir: string) {
     env: {
       AWS_ACCESS_KEY_ID: source.s3accessKey,
       AWS_SECRET_ACCESS_KEY: source.s3secretKey,
+      AWS_SESSION_TOKEN: source.s3sessionToken,
       AWS_REGION: source.s3region
     },
     shell: true
@@ -67,6 +69,7 @@ async function copyToLocal(source: BucketConfig, stagingDir: string) {
     env: {
       AWS_ACCESS_KEY_ID: source.s3accessKey,
       AWS_SECRET_ACCESS_KEY: source.s3secretKey,
+      AWS_SESSION_TOKEN: source.s3sessionToken,
       AWS_REGION: source.s3region
     },
     shell: true
@@ -90,6 +93,7 @@ async function syncLocalToRemote(dest: BucketConfig, stagingDir: string) {
     env: {
       AWS_ACCESS_KEY_ID: dest.s3accessKey,
       AWS_SECRET_ACCESS_KEY: dest.s3secretKey,
+      AWS_SESSION_TOKEN: dest.s3sessionToken,
       AWS_REGION: dest.s3region
     },
     shell: true
@@ -113,6 +117,7 @@ async function copyLocalToRemote(dest: BucketConfig, filePath: string) {
     env: {
       AWS_ACCESS_KEY_ID: dest.s3accessKey,
       AWS_SECRET_ACCESS_KEY: dest.s3secretKey,
+      AWS_SESSION_TOKEN: dest.s3sessionToken,
       AWS_REGION: dest.s3region
     },
     shell: true
