@@ -103,21 +103,21 @@ AWS_CLI_PATH=/usr/local/bin/aws               # Optional, default: aws
 
 ## Command Line Options
 
-| Option | Environment Variable | Description | Default |
-|--------|---------------------|-------------|---------|
-| `--source-access-key` | `SOURCE_ACCESS_KEY` | Source S3 access key | - |
-| `--source-secret-key` | `SOURCE_SECRET_KEY` | Source S3 secret key | - |
-| `--source-session-token` | `SOURCE_SESSION_TOKEN` | Source S3 session token (for temporary credentials) | - |
-| `--source-region` | `SOURCE_REGION` | Source S3 region | - |
-| `--source-endpoint` | `SOURCE_ENDPOINT` | Source S3 endpoint (for S3-compatible services) | - |
-| `--dest-access-key` | `DEST_ACCESS_KEY` | Destination S3 access key | - |
-| `--dest-secret-key` | `DEST_SECRET_KEY` | Destination S3 secret key | - |
-| `--dest-session-token` | `DEST_SESSION_TOKEN` | Destination S3 session token (for temporary credentials) | - |
-| `--dest-region` | `DEST_REGION` | Destination S3 region | - |
-| `--dest-endpoint` | `DEST_ENDPOINT` | Destination S3 endpoint (for S3-compatible services) | - |
-| `--staging-dir` | `STAGING_DIR` | Local staging directory | `/tmp/data` |
-| `--single-file` | - | Use copy instead of sync for single file operations | `false` |
-| `--aws-cli-path` | `AWS_CLI_PATH` | Full path to AWS CLI executable | `aws` |
+| Option                   | Environment Variable   | Description                                              | Default     |
+| ------------------------ | ---------------------- | -------------------------------------------------------- | ----------- |
+| `--source-access-key`    | `SOURCE_ACCESS_KEY`    | Source S3 access key                                     | -           |
+| `--source-secret-key`    | `SOURCE_SECRET_KEY`    | Source S3 secret key                                     | -           |
+| `--source-session-token` | `SOURCE_SESSION_TOKEN` | Source S3 session token (for temporary credentials)      | -           |
+| `--source-region`        | `SOURCE_REGION`        | Source S3 region                                         | -           |
+| `--source-endpoint`      | `SOURCE_ENDPOINT`      | Source S3 endpoint (for S3-compatible services)          | -           |
+| `--dest-access-key`      | `DEST_ACCESS_KEY`      | Destination S3 access key                                | -           |
+| `--dest-secret-key`      | `DEST_SECRET_KEY`      | Destination S3 secret key                                | -           |
+| `--dest-session-token`   | `DEST_SESSION_TOKEN`   | Destination S3 session token (for temporary credentials) | -           |
+| `--dest-region`          | `DEST_REGION`          | Destination S3 region                                    | -           |
+| `--dest-endpoint`        | `DEST_ENDPOINT`        | Destination S3 endpoint (for S3-compatible services)     | -           |
+| `--staging-dir`          | `STAGING_DIR`          | Local staging directory                                  | `/tmp/data` |
+| `--single-file`          | -                      | Use copy instead of sync for single file operations      | `false`     |
+| `--aws-cli-path`         | `AWS_CLI_PATH`         | Full path to AWS CLI executable                          | `aws`       |
 
 ## Large File Handling
 
