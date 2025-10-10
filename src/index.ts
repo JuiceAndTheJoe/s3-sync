@@ -136,7 +136,15 @@ async function copyLargeFileChunkedSDK(
   const destClient = createS3Client(dest);
 
   const sourceKey = source.s3url.pathname.substring(1);
-  const destKey = dest.s3url.pathname.substring(1);
+  let destKey = dest.s3url.pathname.substring(1);
+  
+  // If destination ends with '/' or is empty, append the source filename
+  if (destKey === '' || destKey.endsWith('/')) {
+    const sourceFileName = source.s3url.pathname.split('/').pop();
+    if (sourceFileName) {
+      destKey = destKey + sourceFileName;
+    }
+  }
 
   // Initiate multipart upload on destination
   const createCommand = new CreateMultipartUploadCommand({
