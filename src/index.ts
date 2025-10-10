@@ -17,6 +17,7 @@ export interface SyncOptions {
   source: BucketConfig;
   dest: BucketConfig;
   stagingDir?: string;
+  singleFile?: boolean;
 }
 
 async function prepare(stagingDir = DEFAULT_STAGING_DIR) {
@@ -56,6 +57,29 @@ async function syncToLocal(source: BucketConfig, stagingDir: string) {
   console.log(`Synced ${source.s3url.toString()} to ${stagingDir}`);
 }
 
+async function copyToLocal(source: BucketConfig, stagingDir: string) {
+  console.log(`Copying from ${source.s3url} to ${stagingDir}`);
+  const args = createS3cmdArgs(
+    ['cp', source.s3url.toString(), stagingDir],
+    source.s3endpoint
+  );
+  const { status, stderr } = spawnSync('aws', args, {
+    env: {
+      AWS_ACCESS_KEY_ID: source.s3accessKey,
+      AWS_SECRET_ACCESS_KEY: source.s3secretKey,
+      AWS_REGION: source.s3region
+    },
+    shell: true
+  });
+  if (status !== 0) {
+    if (stderr) {
+      console.log(stderr.toString());
+    }
+    throw new Error('Copy to staging dir failed');
+  }
+  console.log(`Copied ${source.s3url.toString()} to ${stagingDir}`);
+}
+
 async function syncLocalToRemote(dest: BucketConfig, stagingDir: string) {
   console.log(`Syncing from ${stagingDir} to ${dest.s3url}`);
   const args = createS3cmdArgs(
@@ -79,11 +103,41 @@ async function syncLocalToRemote(dest: BucketConfig, stagingDir: string) {
   console.log(`Synced ${stagingDir} to ${dest.s3url.toString()}`);
 }
 
+async function copyLocalToRemote(dest: BucketConfig, filePath: string) {
+  console.log(`Copying from ${filePath} to ${dest.s3url}`);
+  const args = createS3cmdArgs(
+    ['cp', filePath, dest.s3url.toString()],
+    dest.s3endpoint
+  );
+  const { status, stderr } = spawnSync('aws', args, {
+    env: {
+      AWS_ACCESS_KEY_ID: dest.s3accessKey,
+      AWS_SECRET_ACCESS_KEY: dest.s3secretKey,
+      AWS_REGION: dest.s3region
+    },
+    shell: true
+  });
+  if (status !== 0) {
+    if (stderr) {
+      console.log(stderr.toString());
+    }
+    throw new Error('Copy to remote bucket failed');
+  }
+  console.log(`Copied ${filePath} to ${dest.s3url.toString()}`);
+}
+
 export async function doSync(opts: SyncOptions) {
   const stagingDir = await prepare(opts.stagingDir);
   try {
-    await syncToLocal(opts.source, stagingDir);
-    await syncLocalToRemote(opts.dest, stagingDir);
+    if (opts.singleFile) {
+      await copyToLocal(opts.source, stagingDir);
+      const fileName = opts.source.s3url.pathname.split('/').pop();
+      const filePath = join(stagingDir, fileName || '');
+      await copyLocalToRemote(opts.dest, filePath);
+    } else {
+      await syncToLocal(opts.source, stagingDir);
+      await syncLocalToRemote(opts.dest, stagingDir);
+    }
     await cleanup(stagingDir);
   } catch (err) {
     await cleanup(stagingDir);
