@@ -39,6 +39,10 @@ cli
     'Staging directory (STAGING_DIR)',
     '/tmp/data'
   )
+  .option(
+    '--single-file',
+    'Use copy instead of sync for single file operations'
+  )
   .action(async (source, dest, options) => {
     try {
       await doSync({
@@ -56,7 +60,8 @@ cli
           s3accessKey: process.env.DEST_ACCESS_KEY || options.destAccessKey,
           s3secretKey: process.env.DEST_SECRET_KEY || options.destSecretKey
         },
-        stagingDir: process.env.STAGING_DIR || options.stagingDir
+        stagingDir: process.env.STAGING_DIR || options.stagingDir,
+        singleFile: options.singleFile
       });
     } catch (err) {
       console.log((err as Error).message);
