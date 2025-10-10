@@ -130,7 +130,36 @@ Files larger than 500MB are automatically processed using chunked copying with t
 
 ## Eyevinn Open Source Cloud
 
-Also available as an open web service in [Eyevinn Open Source Cloud](https://www.osaas.io). This enables you to synchronize two S3 buckets without having to go through your local computer. Read [this documentation](https://docs.osaas.io/osaas.wiki/Service%3A-S3-Sync.html) for usage instructions.
+Looking for a hassle-free way to sync S3 buckets without installing anything locally? The S3 Sync service is also available as a managed web service in [Eyevinn Open Source Cloud](https://www.osaas.io).
+
+### Why Use OSC?
+
+- **No Local Setup**: No need to install AWS CLI or Node.js
+- **Cloud-to-Cloud**: Direct bucket synchronization without routing through your computer
+- **Secure Credential Management**: Store AWS credentials safely in OSC's secret management system
+- **All Features Supported**: Large file handling, session tokens, cross-region sync, and more
+
+### Getting Started with OSC
+
+1. **Sign up** for a free account at [app.osaas.io](https://app.osaas.io)
+
+2. **Create credential secrets** for your source bucket:
+   - Navigate to Secrets and create `sourceaccesskey` 
+   - Create another secret `sourcesecretkey`
+
+3. **Create credential secrets** for your destination bucket:
+   - Create `destinationaccesskey`
+   - Create `destinationsecretkey`
+
+4. **Launch the S3 Sync service**:
+   - Browse to the [S3 Sync service](https://app.osaas.io/browse/eyevinn-s3-sync)
+   - Configure your source and destination bucket URLs
+   - Reference your stored credentials
+   - Optional: Configure regions, endpoints, and other advanced settings
+
+5. **Start syncing**: Your buckets will sync directly in the cloud!
+
+For detailed setup instructions and advanced configuration options, see the [complete OSC documentation](https://docs.osaas.io/osaas.wiki/Service%3A-S3-Sync.html).
 
 ## Development
 
